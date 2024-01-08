@@ -85,18 +85,102 @@ FakeString.prototype.includes = function (searchString, position = 0) {
   return false;
 };
 
-FakeString.prototype.concat = function () {
-  //completar
+
+FakeString.prototype.concat = function(...strings) {
+  let result = this.primitiveValue;
+
+  for (const argumentValue of strings) {
+    if (typeof argumentValue === 'string') {
+      result += argumentValue;
+    }
+  }
+
+  return result;
 };
 
-FakeString.prototype.indexOf = function () {
-  //completar
+
+FakeString.prototype.indexOf = function(searchValue, fromIndex = 0) {
+  if (searchValue === "") {
+    return 0;
+  }
+
+  if (fromIndex < 0) {
+    fromIndex = 0;
+  } else if (fromIndex >= this.length) {
+    return -1;
+  }
+
+  for (let i = fromIndex; i < this.length; i++) {
+    let subStr = '';
+    for (let j = 0; j < searchValue.length; j++) {
+      if (i + j < this.length) {
+        subStr += this[i + j];
+      } else {
+        break;
+      }
+    }
+    if (subStr === searchValue) {
+      return i;
+    }
+  }
+
+  return -1;
 };
 
-FakeString.prototype.trim = function () {
-  //completar
+FakeString.prototype.trim = function() {
+  let start = 0;
+  let end = this.length - 1;
+
+  while (start <= end && this[start] === ' ') {
+    start++;
+  }
+
+  while (end >= start && this[end] === ' ') {
+    end--;
+  }
+
+  let trimmedString = '';
+  for (let i = start; i <= end; i++) {
+    trimmedString += this[i];
+  }
+
+  return trimmedString;
 };
 
-FakeString.prototype.split = function () {
-  //completar
+FakeString.prototype.split = function(delimiter, limit) {
+  let result = [];
+  let temporaryString = '';
+
+  if (delimiter === undefined || delimiter === '') {
+    return this.length === 0 ? [] : [this.primitiveValue];
+  }
+
+  let delimiterIndex = 0;
+  let matchCount = 0;
+
+  for (let i = 0; i < this.length; i++) {
+    if (this[i] === delimiter[delimiterIndex]) {
+      if (delimiterIndex === delimiter.length - 1) {
+        result.push(temporaryString);
+        temporaryString = '';
+        delimiterIndex = 0;
+        matchCount++;
+
+        if (limit !== undefined && matchCount === limit) {
+          return result;
+        }
+      } else {
+        delimiterIndex++;
+      }
+    } else {
+      temporaryString += (delimiterIndex > 0 ? delimiter.slice(0, delimiterIndex) : '') + this[i];
+      delimiterIndex = 0;
+    }
+  }
+
+  if (temporaryString !== '' || delimiterIndex > 0) {
+    result.push(temporaryString);
+  }
+
+  return result;
 };
